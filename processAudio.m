@@ -53,11 +53,15 @@ ylabel('RMS error (units: 16-bit FSD)');
 xlabel('Output bit depth');
 
 disp(rmsError);
-
-
 end
 
+%--------------------------------------------------------------------------
+% Encoder and decoder functions
+%--------------------------------------------------------------------------
 function [lrMax, g] = frameEncode(f, nbits)
+% Encode a frame of audio with output resolution nbits
+% returns the maximum scalar value in this frame
+
 f = double(f);                      % promote to higher precision
 fsd = 2^(nbits-1)-1;
 frameMax = max(abs(f));             % get per-channel maximum amplitudes
@@ -67,12 +71,18 @@ g = int16(f.*scale);                % now got reduced bit depth
 end
 
 function f = frameDecode(lrMax, g, nbits)
+% Decode a frame of audio with
+%  lrMax - target maximum scalar amplitude
+%  encoded frame g
+%  input resolution nbits
 fsd = 2^(nbits-1);
 scale = lrMax/fsd;
-f = g * scale;
+f = g .* scale;
 end
 
 function plotLR(d, nbits)
+% Plot an audio sample as left/right channels, with Y scaling suitable for
+% n bits of resolution
 fsd = 2^(nbits-1);
 
 ax1 = subplot(2,1,1);       % top subplot
